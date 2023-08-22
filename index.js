@@ -1,5 +1,7 @@
-const { Client, GatewayIntentBits } = require('discord.js')
-require('dotenv/config')
+const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+require('dotenv/config');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const client = new Client({
     intents: [
@@ -11,6 +13,8 @@ const client = new Client({
         GatewayIntentBits.GuildVoiceStates,
     ],
 })
+
+client.commands = new Collection();
 
 client.on('ready', () => {
     console.log('Ready, set, go!')
