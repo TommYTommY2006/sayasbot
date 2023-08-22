@@ -34,7 +34,7 @@ client.on('messageCreate', message => {
 })
 
 client.on('voiceStateUpdate', (oldState, newState) => {
-    if (newState.1109566626232721931 === 'Join for a VC') {
+    if (newState.channelId === '1109566626232721931') {
         newState.guild.channels.create("New Channel", {
             type: 'voice'
             parent: '1109565465879134349'
