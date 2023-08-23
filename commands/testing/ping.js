@@ -1,12 +1,19 @@
 const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('ping')
-        .setDescription('PINGPINGPINGPINGPINGPINGPING'),
-    async execute(interaction) {
-        // interaction.guild is the object representing the Guild in which the command was run
-        const sent = await interaction.reply({ content: `pinging...`, fetchReply: true });
-        interaction.editReply(`Roundtrip latency: ${sent.createdTimestamp - interaction.createdTimestamp}ms`);
-    },
+    name: 'ping',
+    description: 'pong!',
+    // devOnly: Boolean,
+    // testOnly: Boolean,
+    // options: Object[],
+
+    callback: async (client, interaction) => {
+        await interaction.deferReply();
+
+        const reply = await interaction.fetchReply();
+
+        const ping = reply.createdTimestamp - interaction.createdTimestamp;
+
+        interaction.editReply(`Client ping is ${ping}ms. Websocket ping is ${client.ws.ping}ms. (nerd)`)
+    }
 };

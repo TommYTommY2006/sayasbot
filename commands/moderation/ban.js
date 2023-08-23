@@ -48,9 +48,8 @@ module.exports = {
             console.log(`[WARNING] There was an error when banning: ${error}`)
         }
     },
-    data: new SlashCommandBuilder,
     name: 'ban',
-    description: 'bans really naughty people',
+    description: 'bans really naughty people!!!',
     options: [
         {
             name: 'target-user',
@@ -62,6 +61,7 @@ module.exports = {
             name: 'reason',
             description: 'The reason this naughty user is being banned',
             type: ApplicationCommandOptionType.String,
+            required: true,
         }
     ],
     permissionsRequired: [PermissionFlagsBits.BanMembers],
