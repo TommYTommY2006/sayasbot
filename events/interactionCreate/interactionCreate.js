@@ -7,6 +7,7 @@ module.exports = async (client, interaction) => {
     const localCommands = getLocalCommands();
 
     try{
+        await interaction.deferReply()
         const commandObject = localCommands.find(
             (cmd) => cmd.name === interaction.commandName
         );
@@ -15,31 +16,24 @@ module.exports = async (client, interaction) => {
 
         if (commandObject.devOnly) {
             if (!devs.includes(interaciton.member.id)) {
-                interaction.reply({
-                    content: `Only developers are allowed to use this command u dummy`,
-                    ephemeral: true
-                });
+                interaction.editReply("Only devs can use this command.")
                 return;
             }
         }
 
         if (commandObject.testOnly) {
             if (!(interaction.guild.id === guildId)) {
-                interaction.reply({
-                    content: `This command only works in the test server u stupid ahhh`,
-                    ephemeral: true
-                });
+                interaction.editReply("This command can only be used in the test server.")
                 return;
             }
         }
 
         if (commandObject.permissionsRequired?.length) {
             for (const permission of commandObject.permissionsRequired) {
+                console.log('2a')
                 if (!interaction.member.permissions.has(permission)) {
-                    interaction.reply({
-                        content: 'Not enough permissions',
-                        ephemeral: true
-                    });
+                    console.log('2b')
+                    interaction.editReply("Not enough permissions")
                     break;
                 }
             }
@@ -48,12 +42,9 @@ module.exports = async (client, interaction) => {
         if (commandObject.botPermissions?.length) {
             for (const permission of commandObject.botPermissions) {
                 const bot = interaction.guild.members.me;
-
+                
                 if (!bot.permissions.has(permission)) {
-                    interaction.reply({
-                        content: 'I dont have enough permissions for that',
-                        ephemeral: true
-                    });
+                    interaction.editReply("Not enough permissions")
                     break;
                 }
             }

@@ -1,4 +1,4 @@
-const { Client, Interaction, ApplicationCommandOptionType, PermissionFlagsBits, PermissionOverwriteManager, SlashCommandBuilder } = require('discord.js');
+const { Client, Interaction, ApplicationCommandOptionType, PermissionFlagsBits, PermissionOverwriteManager, SlashCommandBuilder, Permissions, PermissionsBitField } = require('discord.js');
 
 module.exports = {
     
@@ -12,7 +12,7 @@ module.exports = {
         const targetUserId = interaction.options.get('target-user').value;
         const reason = interaction.options.get('reason')?.value || "No reason provided";
 
-        await interaction.deferReply();
+        // await interaction.deferReply();
 
         const targetUser = await interaction.guild.members.fetch(targetUserId);
 
@@ -30,6 +30,8 @@ module.exports = {
         const requestUserRolePosition = interaction.member.roles.highest.position; // highest role of user running command
         const botRolePosition = interaction.guild.members.me.roles.highest.position; // highest role of bot
 
+        console.log(`${targetUserRolePosition} ${requestUserRolePosition} ${botRolePosition}`)
+
         if (targetUserRolePosition >= requestUserRolePosition) {
             await interaction.editReply("You can't ban that user because they have the same/higher role than you. Silly goose.");
             return;
@@ -40,16 +42,21 @@ module.exports = {
             return;
         } 
 
-        //ban the target user
+        if (!(interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers))) {
+            await interaction.editReply("Not enough permissions... try pinging the server owner!");
+            return;
+        }
+
+        //kick the target user
         try {
-            await targetUser.ban({ reason });
+            await targetUser.kick(reason);
             await interaction.editReply(`User ${targetUser} was banned\nThey were banned for: ${reason}`);
         } catch (error) {
             console.log(`[WARNING] There was an error when banning: ${error}`)
         }
     },
     name: 'ban',
-    description: 'bans really naughty people!!!',
+    description: 'bans slightly naughty people!!!',
     options: [
         {
             name: 'target-user',
@@ -61,9 +68,9 @@ module.exports = {
             name: 'reason',
             description: 'The reason this naughty user is being banned',
             type: ApplicationCommandOptionType.String,
-            required: true,
+            required: false,
         }
     ],
     permissionsRequired: [PermissionFlagsBits.BanMembers],
-    botPermissions: [PermissionFlagsBits.BanMembers],
+    botPermissions: [PermissionFlagsBits.BanMembers]
 }
